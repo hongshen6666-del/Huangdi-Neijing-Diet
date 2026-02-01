@@ -3,52 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>黄帝内经 · 岁时食谱</title>
+    <title>黄帝内经 · 岁时对症食谱</title>
     <style>
-        body { font-family: "STKaiti", "KaiTi", serif; background-color: #f4f1ea; color: #333; margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 500px; margin: auto; border: 2px solid #a0522d; padding: 25px; background: #fff; border-radius: 10px; }
-        h1 { color: #a0522d; }
-        .recipe-box { min-height: 120px; background: #fff5e6; border: 1px dashed #d2b48c; margin: 20px 0; padding: 20px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em; color: #d44d22; }
-        button { background: #a0522d; color: white; border: none; padding: 10px 25px; font-size: 1em; border-radius: 5px; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #d44d22; }
-        .tips { font-size: 0.8em; color: #8a6d3b; margin-top: 15px; }
+        :root { --primary-color: #a0522d; --bg-color: #f4f1ea; --accent-color: #d44d22; }
+        body { font-family: "STKaiti", "KaiTi", serif; background-color: var(--bg-color); color: #333; margin: 0; padding: 15px; }
+        .container { max-width: 600px; margin: auto; border: 2px solid var(--primary-color); padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { color: var(--primary-color); text-align: center; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-top: 0; }
+        .intro { font-size: 0.9em; color: #666; text-align: center; margin-bottom: 20px; }
+        
+        /* 症状选择器 */
+        .label-title { font-weight: bold; margin-bottom: 10px; display: block; color: var(--primary-color); }
+        .symptom-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .tag { background: #fdfdfd; border: 1px solid #d2b48c; padding: 12px 8px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.95em; transition: 0.3s; }
+        .tag.active { background: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        
+        /* 三餐显示 */
+        .meal-card { background: #fff5e6; border-left: 5px solid var(--accent-color); padding: 15px; margin-top: 15px; display: none; border-radius: 0 8px 8px 0; }
+        .meal-time { font-weight: bold; color: var(--primary-color); display: block; margin-bottom: 8px; border-bottom: 1px dashed #d2b48c; padding-bottom: 5px; }
+        .content { line-height: 1.6; font-size: 1.05em; }
+        .highlight { color: var(--accent-color); font-weight: bold; }
+        
+        .footer { font-size: 0.8em; color: #777; text-align: center; margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📜 黄帝内经 · 每日荐餐</h1>
-        <p>顺应天时，调理 5 岁小儿脾胃</p>
-        
-        <div id="recipe-display" class="recipe-box">
-            早晨好，请点击下方开启今日食谱
+        <h1>📜 黄帝内经 · 对症食谱</h1>
+        <p class="intro">专为 5 岁小儿脾胃调理设计 · 顺时而食</p>
+
+        <span class="label-title">第一步：观察孩子今日症状（点击选择）</span>
+        <div class="symptom-selector">
+            <div class="tag" onclick="selectSymptom('jishi', this)">积食（口臭/舌苔厚）</div>
+            <div class="tag" onclick="selectSymptom('pixu', this)">脾虚（不爱吃饭/面黄）</div>
+            <div class="tag" onclick="selectSymptom('yinxiu', this)">内火（手心热/大便干）</div>
+            <div class="tag" onclick="selectSymptom('shiqi', this)">湿气（便溏/没精神）</div>
         </div>
 
-        <button onclick="getDailyRecipe()">今日吃什么？</button>
+        <div id="meal-display">
+            <div id="breakfast" class="meal-card"><span class="meal-time">☀️ 辰时 · 早餐 (07:00-09:00)</span><span class="content"></span></div>
+            <div id="lunch" class="meal-card"><span class="meal-time">🌤️ 午时 · 午餐 (11:00-13:00)</span><span class="content"></span></div>
+            <div id="dinner" class="meal-card"><span class="meal-time">🌙 酉时 · 晚餐 (17:00-19:00)</span><span class="content"></span></div>
+        </div>
 
-        <div class="tips">
-            * 建议：晨起先饮温水一杯，保护胃气。
+        <div class="footer">
+            <p>“脾为人身之本，5岁前需细心呵护”</p>
+            <p id="wealth-tag" style="color:#d2b48c;"></p>
         </div>
     </div>
 
     <script>
-        const seasonalRecipes = [
-            "【健脾粥】怀山药 + 芡实 + 大米粥 (最养脾胃)",
-            "【温补餐】南瓜蒸百合 (补中益气，适合脾虚)",
-            "【消食餐】白萝卜清炖牛腩 (顺气导滞，晚餐少吃)",
-            "【舒肝餐】荠菜豆腐羹 (春季应时，调理肝气)",
-            "【开胃粥】陈皮瘦肉粥 (理气健脾，改善胃口)"
-        ];
+        const dietData = {
+            jishi: {
+                breakfast: "【消积】焦山楂麦芽水 + 蒸馒头片。原理：焦香入脾，山楂化肉积，麦芽化谷积。",
+                lunch: "【顺气】白萝卜羊肉汤面（萝卜多肉少）。原理：萝卜下气消胀，缓解胃部压力。",
+                dinner: "【清淡】陈皮小米粥。原理：陈皮理气，小米护胃，晚餐减负是关键。"
+            },
+            pixu: {
+                breakfast: "【健脾】怀山药大枣粥（山药去皮切碎）。原理：山药补脾固肾，大枣补气养血。",
+                lunch: "【益气】板栗炖鸡肉 + 软糯米饭。原理：板栗为肾之果，亦能健脾，适合瘦弱孩子。",
+                dinner: "【温中】南瓜茯苓糊。原理：南瓜补中益气，茯苓祛湿健脾，利于安稳睡眠。"
+            },
+            yinxiu: {
+                breakfast: "【滋阴】银耳百合羹（加少许冰糖）。原理：百合滋阴润肺，银耳润燥通便。",
+                lunch: "【清补】清蒸鲈鱼 + 炒嫩菠菜。原理：鱼肉温和易消化，菠菜补血润燥。",
+                dinner: "【润下】藕粉胡萝卜泥。原理：藕粉安神生津，胡萝卜健脾润肠。"
+            },
+            shiqi: {
+                breakfast: "【祛湿】炒薏米芡实糊。原理：薏米炒用不凉，芡实固肾健脾排湿。",
+                lunch: "【醒脾】砂仁蒸肉饼（砂仁少量打粉）。原理：砂仁辛散，能化湿醒脾，增进食欲。",
+                dinner: "【和胃】赤小豆山药粥。原理：赤小豆利水消肿，与山药同煮健脾祛湿。"
+            }
+        };
 
-        function getDailyRecipe() {
-            const display = document.getElementById('recipe-display');
-            // 增加一点点击的动效感
-            display.innerText = "正在掐算时令...";
+        function selectSymptom(type, element) {
+            document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+
+            const meal = dietData[type];
+            const times = ['breakfast', 'lunch', 'dinner'];
             
-            setTimeout(() => {
-                const randomIndex = Math.floor(Math.random() * seasonalRecipes.length);
-                display.innerHTML = seasonalRecipes[randomIndex];
-            }, 500);
+            times.forEach(time => {
+                const card = document.getElementById(time);
+                card.style.display = 'block';
+                card.querySelector('.content').innerHTML = meal[time];
+            });
+            
+            // 自动滚动到显示区域
+            window.scrollTo({ top: document.getElementById('meal-display').offsetTop, behavior: 'smooth' });
         }
+
+        // 财富分身小彩蛋：如果金银比在高位，可以手动修改这里或通过Actions更新
+        document.getElementById('wealth-tag').innerText = "当前金银比监控中：资产配置与育儿同等重要。";
     </script>
 </body>
 </html>
