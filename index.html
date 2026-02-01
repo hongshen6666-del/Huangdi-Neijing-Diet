@@ -3,97 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>黄帝内经 · 岁时对症食谱</title>
+    <title>黄帝内经 · 岁时食谱</title>
     <style>
-        :root { --primary-color: #a0522d; --bg-color: #f4f1ea; --accent-color: #d44d22; }
-        body { font-family: "STKaiti", "KaiTi", serif; background-color: var(--bg-color); color: #333; margin: 0; padding: 15px; }
-        .container { max-width: 600px; margin: auto; border: 2px solid var(--primary-color); padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h1 { color: var(--primary-color); text-align: center; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-top: 0; }
-        .intro { font-size: 0.9em; color: #666; text-align: center; margin-bottom: 20px; }
+        :root { --main-color: #8b4513; --sub-color: #d44d22; --bg: #fdfaf5; }
+        body { font-family: "STKaiti", "KaiTi", serif; background: #f0f0f0; margin: 0; padding: 10px; }
+        .container { max-width: 500px; margin: auto; background: var(--bg); border: 2px solid var(--main-color); border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        h1 { color: var(--main-color); text-align: center; border-bottom: 2px solid var(--main-color); margin: 0 0 15px 0; padding-bottom: 10px; }
         
-        /* 症状选择器 */
-        .label-title { font-weight: bold; margin-bottom: 10px; display: block; color: var(--primary-color); }
-        .symptom-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
-        .tag { background: #fdfdfd; border: 1px solid #d2b48c; padding: 12px 8px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.95em; transition: 0.3s; }
-        .tag.active { background: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        
-        /* 三餐显示 */
-        .meal-card { background: #fff5e6; border-left: 5px solid var(--accent-color); padding: 15px; margin-top: 15px; display: none; border-radius: 0 8px 8px 0; }
-        .meal-time { font-weight: bold; color: var(--primary-color); display: block; margin-bottom: 8px; border-bottom: 1px dashed #d2b48c; padding-bottom: 5px; }
-        .content { line-height: 1.6; font-size: 1.05em; }
-        .highlight { color: var(--accent-color); font-weight: bold; }
-        
-        .footer { font-size: 0.8em; color: #777; text-align: center; margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee; }
+        /* 症状选择 */
+        .section-title { font-size: 0.95em; font-weight: bold; color: var(--main-color); margin: 15px 0 10px 0; display: block; }
+        .grid-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .tag { background: #fff; border: 1px solid #d2b48c; padding: 12px 5px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.9em; transition: 0.3s; }
+        .tag.active { background: var(--main-color); color: white; border-color: var(--main-color); }
+
+        /* 时段切换按钮 */
+        .meal-nav { display: flex; justify-content: space-between; margin: 25px 0 15px 0; border-bottom: 2px solid #eee; }
+        .meal-btn { flex: 1; padding: 12px; cursor: pointer; text-align: center; color: #888; font-weight: bold; transition: 0.3s; }
+        .meal-btn.active { color: var(--sub-color); border-bottom: 3px solid var(--sub-color); background: #fff5e6; }
+
+        /* 内容展示区 */
+        .recipe-display { min-height: 180px; background: #fff; border-radius: 10px; padding: 20px; border: 1px solid #e0e0e0; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .recipe-title { color: var(--sub-color); font-size: 1.1em; font-weight: bold; margin-bottom: 10px; display: block; }
+        .recipe-detail { line-height: 1.8; font-size: 1.05em; color: #444; }
+        .health-tip { margin-top: 20px; padding: 15px; background: #fff5e6; border-left: 4px solid var(--main-color); font-size: 0.9em; color: #8a6d3b; border-radius: 0 5px 5px 0; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📜 黄帝内经 · 对症食谱</h1>
-        <p class="intro">专为 5 岁小儿脾胃调理设计 · 顺时而食</p>
-
-        <span class="label-title">第一步：观察孩子今日症状（点击选择）</span>
-        <div class="symptom-selector">
-            <div class="tag" onclick="selectSymptom('jishi', this)">积食（口臭/舌苔厚）</div>
-            <div class="tag" onclick="selectSymptom('pixu', this)">脾虚（不爱吃饭/面黄）</div>
-            <div class="tag" onclick="selectSymptom('yinxiu', this)">内火（手心热/大便干）</div>
-            <div class="tag" onclick="selectSymptom('shiqi', this)">湿气（便溏/没精神）</div>
+        <h1>📜 黄帝内经 · 岁时食谱</h1>
+        
+        <span class="section-title">1. 请观察孩子状态：</span>
+        <div class="grid-selector">
+            <div class="tag active" onclick="changeSymptom('jishi', this)">积食(口臭/苔厚)</div>
+            <div class="tag" onclick="changeSymptom('pixu', this)">脾虚(没胃口/面黄)</div>
+            <div class="tag" onclick="changeSymptom('yinxiu', this)">内火(手热/便干)</div>
+            <div class="tag" onclick="changeSymptom('shiqi', this)">湿重(便溏/腻)</div>
         </div>
 
-        <div id="meal-display">
-            <div id="breakfast" class="meal-card"><span class="meal-time">☀️ 辰时 · 早餐 (07:00-09:00)</span><span class="content"></span></div>
-            <div id="lunch" class="meal-card"><span class="meal-time">🌤️ 午时 · 午餐 (11:00-13:00)</span><span class="content"></span></div>
-            <div id="dinner" class="meal-card"><span class="meal-time">🌙 酉时 · 晚餐 (17:00-19:00)</span><span class="content"></span></div>
+        <div class="meal-nav">
+            <div class="meal-btn active" onclick="changeMeal('breakfast', this)">☀️ 早餐</div>
+            <div class="meal-btn" onclick="changeMeal('lunch', this)">🌤️ 午餐</div>
+            <div class="meal-btn" onclick="changeMeal('dinner', this)">🌙 晚餐</div>
         </div>
 
-        <div class="footer">
-            <p>“脾为人身之本，5岁前需细心呵护”</p>
-            <p id="wealth-tag" style="color:#d2b48c;"></p>
+        <div class="recipe-display">
+            <span id="recipe-name" class="recipe-title"></span>
+            <div id="recipe-content" class="recipe-detail"></div>
+        </div>
+
+        <div class="health-tip">
+            <strong>💡 调理要旨：</strong>
+            <span id="health-advice"></span>
         </div>
     </div>
 
     <script>
-        const dietData = {
+        // 【在此处增加或修改你的食谱内容】
+        const recipes = {
             jishi: {
-                breakfast: "【消积】焦山楂麦芽水 + 蒸馒头片。原理：焦香入脾，山楂化肉积，麦芽化谷积。",
-                lunch: "【顺气】白萝卜羊肉汤面（萝卜多肉少）。原理：萝卜下气消胀，缓解胃部压力。",
-                dinner: "【清淡】陈皮小米粥。原理：陈皮理气，小米护胃，晚餐减负是关键。"
+                name: "运脾化积方案",
+                advice: "积食重在『消』。晚餐减半或不吃肉，让脾胃休息。",
+                breakfast: "【焦山楂麦芽水】配烤焦的馒头片。焦香入脾，能化解肉积和谷积。",
+                lunch: "【白萝卜丝煮面】尽量煮软，加入少量青菜。白萝卜顺气消胀效果极佳。",
+                dinner: "【清粥油】只喝粥上面的浓汤，不吃米粒。极易消化，快速恢复胃气。"
             },
             pixu: {
-                breakfast: "【健脾】怀山药大枣粥（山药去皮切碎）。原理：山药补脾固肾，大枣补气养血。",
-                lunch: "【益气】板栗炖鸡肉 + 软糯米饭。原理：板栗为肾之果，亦能健脾，适合瘦弱孩子。",
-                dinner: "【温中】南瓜茯苓糊。原理：南瓜补中益气，茯苓祛湿健脾，利于安稳睡眠。"
+                name: "健脾益气方案",
+                advice: "脾虚重在『养』。忌生冷瓜果，食物温软为宜。",
+                breakfast: "【怀山药粳米粥】山药去皮切碎同煮。补脾圣品，最宜5岁幼儿。",
+                lunch: "【板栗炖鸡肉】板栗补脾，鸡肉益气。搭配软糯米饭效果更佳。",
+                dinner: "【南瓜茯苓糊】南瓜补中，茯苓祛湿健脾，利于安稳睡眠。"
             },
             yinxiu: {
-                breakfast: "【滋阴】银耳百合羹（加少许冰糖）。原理：百合滋阴润肺，银耳润燥通便。",
-                lunch: "【清补】清蒸鲈鱼 + 炒嫩菠菜。原理：鱼肉温和易消化，菠菜补血润燥。",
-                dinner: "【润下】藕粉胡萝卜泥。原理：藕粉安神生津，胡萝卜健脾润肠。"
+                name: "滋阴润燥方案",
+                advice: "内火重在『润』。少吃辛辣炸物，多用银耳、百合等滋阴食材。",
+                breakfast: "【银耳百合莲子羹】滋阴生津，安神润肺。",
+                lunch: "【清蒸鲈鱼】配清炒菠菜。补充优质蛋白，同时滋阴补血。",
+                dinner: "【藕粉胡萝卜泥】藕粉收敛生津，胡萝卜健脾润肠。"
             },
             shiqi: {
-                breakfast: "【祛湿】炒薏米芡实糊。原理：薏米炒用不凉，芡实固肾健脾排湿。",
-                lunch: "【醒脾】砂仁蒸肉饼（砂仁少量打粉）。原理：砂仁辛散，能化湿醒脾，增进食欲。",
-                dinner: "【和胃】赤小豆山药粥。原理：赤小豆利水消肿，与山药同煮健脾祛湿。"
+                name: "醒脾祛湿方案",
+                advice: "湿重重在『运』。少吃甜食，甜易生湿。",
+                breakfast: "【炒薏米芡实粥】薏米一定要炒过才不伤脾。芡实能固肾排水。",
+                lunch: "【砂仁蒸肉饼】砂仁研末少量加入，能醒脾开胃，化解中焦湿气。",
+                dinner: "【赤小豆山药汤】利水消肿，不给脾胃增加水分负担。"
             }
         };
 
-        function selectSymptom(type, element) {
-            document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
-            element.classList.add('active');
+        let currentSymptom = 'jishi';
+        let currentMeal = 'breakfast';
 
-            const meal = dietData[type];
-            const times = ['breakfast', 'lunch', 'dinner'];
-            
-            times.forEach(time => {
-                const card = document.getElementById(time);
-                card.style.display = 'block';
-                card.querySelector('.content').innerHTML = meal[time];
-            });
-            
-            // 自动滚动到显示区域
-            window.scrollTo({ top: document.getElementById('meal-display').offsetTop, behavior: 'smooth' });
+        function changeSymptom(type, el) {
+            currentSymptom = type;
+            document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            updateUI();
         }
 
-        // 财富分身小彩蛋：如果金银比在高位，可以手动修改这里或通过Actions更新
-        document.getElementById('wealth-tag').innerText = "当前金银比监控中：资产配置与育儿同等重要。";
+        function changeMeal(type, el) {
+            currentMeal = type;
+            document.querySelectorAll('.meal-nav .meal-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            updateUI();
+        }
+
+        function updateUI() {
+            const data = recipes[currentSymptom];
+            document.getElementById('recipe-name').innerText = data.name + " · " + (currentMeal === 'breakfast' ? '早餐' : currentMeal === 'lunch' ? '午餐' : '晚餐');
+            document.getElementById('recipe-content').innerText = data[currentMeal];
+            document.getElementById('health-advice').innerText = data.advice;
+        }
+
+        // 初始化加载
+        updateUI();
     </script>
 </body>
 </html>
