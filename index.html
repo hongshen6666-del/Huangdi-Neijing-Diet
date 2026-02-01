@@ -3,36 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>初食 · 晋地对症详细食谱</title>
+    <title>初食 · 儿童健康饮食全能代理</title>
     <style>
-        :root { --main: #8b4513; --accent: #d44d22; --paper: #fdfaf5; }
-        body { font-family: "STKaiti", "KaiTi", serif; background: #f0f0f0; margin: 0; padding: 10px; }
-        .container { max-width: 500px; margin: auto; background: var(--paper); border: 2px solid var(--main); border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        h1 { color: var(--main); text-align: center; border-bottom: 2px solid var(--main); margin-bottom: 15px; padding-bottom: 10px; }
-        .section-title { font-size: 0.95em; font-weight: bold; color: var(--main); margin: 15px 0 10px 0; display: block; }
+        :root { --main: #2e7d32; --accent: #d44d22; --paper: #ffffff; --bg: #f1f8e9; }
+        body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); margin: 0; padding: 10px; color: #333; }
+        .container { max-width: 600px; margin: auto; background: var(--paper); border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { color: var(--main); text-align: center; margin-bottom: 5px; }
+        .sub-title { text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; }
+        
+        /* 模块导航 */
+        .section-title { font-weight: bold; color: var(--main); margin: 15px 0 10px 0; display: block; }
         .grid-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .tag { background: #fff; border: 1px solid #d2b48c; padding: 12px 5px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.9em; }
+        .tag { background: #f9f9f9; border: 1px solid #e0e0e0; padding: 12px 5px; border-radius: 12px; cursor: pointer; text-align: center; font-size: 0.9em; transition: 0.3s; }
         .tag.active { background: var(--main); color: white; border-color: var(--main); }
-        .meal-nav { display: flex; justify-content: space-between; margin: 25px 0 15px 0; border-bottom: 2px solid #eee; }
+
+        /* 三餐切换 */
+        .meal-nav { display: flex; justify-content: space-around; margin: 25px 0 15px 0; border-bottom: 2px solid #eee; }
         .meal-btn { flex: 1; padding: 12px; cursor: pointer; text-align: center; color: #888; font-weight: bold; }
-        .meal-btn.active { color: var(--accent); border-bottom: 3px solid var(--accent); background: #fff5e6; }
-        .recipe-display { min-height: 250px; background: #fff; border-radius: 10px; padding: 20px; border: 1px solid #e0e0e0; display: flex; flex-direction: column; justify-content: center; }
-        .recipe-text { line-height: 1.8; font-size: 1.05em; color: #444; }
-        .method { font-size: 0.9em; color: #666; background: #f9f9f9; padding: 10px; border-radius: 5px; margin-top: 10px; border-left: 3px solid #d2b48c; }
-        .health-tip { margin-top: 20px; padding: 15px; background: #fff5e6; border-left: 4px solid var(--main); font-size: 0.9em; color: #8a6d3b; border-radius: 0 5px 5px 0; }
+        .meal-btn.active { color: var(--main); border-bottom: 3px solid var(--main); }
+
+        /* 食谱展示区 */
+        .recipe-display { min-height: 220px; background: #fff; border: 1px solid #eee; border-radius: 15px; padding: 20px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
+        .recipe-name { font-weight:bold; color:var(--accent); font-size: 1.2em; margin-bottom: 10px; display: block; }
+        .method { font-size: 0.95em; color: #444; background: #f5f5f5; padding: 15px; border-radius: 10px; line-height: 1.6; }
+
+        /* 成长记录区 */
+        .record-section { margin-top: 30px; padding-top: 20px; border-top: 2px dashed #ccc; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+        button.save-btn { background: var(--main); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; }
+        .record-list { margin-top: 15px; font-size: 0.85em; background: #fff; padding: 10px; border-radius: 8px; max-height: 150px; overflow-y: auto; }
+
+        .footer { text-align: center; font-size: 0.75em; color: #999; margin-top: 30px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📜 晋风 · 详细对症食谱</h1>
-        <p style="text-align: center; font-size: 0.8em; color: #666;">（针对5岁小儿脾胃 · 包含详细做法）</p>
+        <h1>🌱 儿童健康食谱代理</h1>
+        <div class="sub-title">科学膳食 · 守护成长 · 包含山西特色推荐</div>
         
-        <span class="section-title">1. 今日孩子状态：</span>
+        <span class="section-title">1. 选择今日目标：</span>
         <div class="grid-selector">
-            <div class="tag active" onclick="setSymptom('pixu', this)">脾虚(不爱吃饭/面黄)</div>
-            <div class="tag" onclick="setSymptom('jishi', this)">积食(口臭/苔厚)</div>
-            <div class="tag" onclick="setSymptom('yinxiu', this)">内火(燥咳/便干)</div>
-            <div class="tag" onclick="setSymptom('shiqi', this)">湿重(没劲/便溏)</div>
+            <div class="tag active" onclick="setCategory('growth', this)">壮骨长高 (补钙/蛋白)</div>
+            <div class="tag" onclick="setCategory('brain', this)">益智补脑 (护眼/DHA)</div>
+            <div class="tag" onclick="setCategory('digestion', this)">健脾开胃 (针对积食)</div>
+            <div class="tag" onclick="setCategory('daily', this)">均衡营养 (全能每日)</div>
         </div>
 
         <div class="meal-nav">
@@ -42,63 +57,77 @@
         </div>
 
         <div class="recipe-display" onclick="updateUI()">
-            <div id="recipe-area">
-                <div id="recipe-name" style="font-weight:bold; color:var(--accent);">正在加载方案...</div>
-                <div id="recipe-method" class="method"></div>
-            </div>
+            <span id="recipe-name" class="recipe-name">加载中...</span>
+            <div id="recipe-method" class="method"></div>
+            <p style="text-align:center; font-size:0.7em; color:#999; margin-top:10px;">点击卡片随机切换不同方案</p>
         </div>
 
-        <div class="health-tip">
-            <strong>📖 调理建议：</strong>
-            <span id="health-advice"></span>
+        <div class="record-section">
+            <span class="section-title">📊 成长记录台</span>
+            <div class="input-group">
+                <input type="number" id="height" placeholder="身高(cm)">
+                <input type="number" id="weight" placeholder="体重(kg)">
+            </div>
+            <button class="save-btn" onclick="saveRecord()">记录今日数据</button>
+            <div id="history" class="record-list">还没有记录，开始追踪吧！</div>
+        </div>
+
+        <div class="footer">
+            数据来源：《儿童食谱150例》 | 结合黄帝内经顺时养生
         </div>
     </div>
 
     <script>
         const recipePool = {
-            pixu: {
-                advice: "脾虚重在养。山西小米是核心，配上红枣和山药可补脾。5岁孩子忌食生冷。",
+            growth: {
                 breakfast: [
-                    { name: "暖脾小米红枣糊", method: "做法：小米淘洗净，红枣去核切碎。共同放入锅中熬至浓稠。最后用勺子将红枣压泥，与小米油充分融合，温热喂食。" },
-                    { name: "健运怀山药疙瘩汤", method: "做法：山药蒸熟压泥揉入面粉中，搓成极小的面疙瘩。锅中水开后下入，煮至漂浮。补中益气，非常易消化。" },
-                    { name: "补土花生核桃浆", method: "做法：生花生与核桃仁泡软，放入豆浆机加水打浆。过滤掉渣子，只给孩子喝温热的浆液，暖脾补脑。" }
+                    { name: "芝麻黑豆乳", method: "做法：黑豆泡发，黑芝麻炒香。放入豆浆机加水打浆。黑豆壮骨，芝麻补肾。" },
+                    { name: "高钙燕麦牛奶粥", method: "做法：燕麦片加入纯牛奶中小火煮开，可加入碎核桃。提供充足钙质与能量。" }
                 ],
                 lunch: [
-                    { name: "土豆烩牛肉（软烂版）", method: "做法：牛肉切小丁冷水下锅撇沫，加生姜炖1小时至烂。放入土豆块同炖20分钟，收汁至土豆软糯。土豆益气，牛肉补脾。" },
-                    { name: "清蒸羊肉末配白萝卜", method: "做法：羊肉切细末，白萝卜切丝。两者拌匀加少许盐和姜片，上锅蒸20分钟。羊肉暖脾，萝卜防燥，适合北方体弱孩子。" },
-                    { name: "红枣补气焖饭", method: "做法：大米洗净，铺上切碎的去核红枣。按常规焖饭程序操作。米饭带有枣香，补气养血，孩子爱吃。" }
+                    { name: "清蒸鲈鱼", method: "做法：鲈鱼加葱姜蒸10分钟。肉质细嫩，补钙且不伤脾胃。" },
+                    { name: "虾皮炒油菜", method: "做法：油菜切段，虾皮洗净炒香。快速翻炒。高钙组合，北方南方皆宜。" }
                 ],
                 dinner: [
-                    { name: "南瓜小米糊", method: "做法：南瓜去皮切块蒸熟压泥，加入煮好的小米粥中搅拌均匀。南瓜补中益气，小米护胃，晚餐温和。" },
-                    { name: "和胃豆角焖面", method: "做法：豆角必须切细并炖至断生。下入细面条，盖盖焖至面条熟软且豆角极烂。山西家常，重在烂熟，不伤胃气。" },
-                    { name: "温润热汤面片", method: "做法：面团擀薄切成小片。锅中少许油炒香白菜碎，加水煮开下入面片。出锅前滴两滴老陈醋，醒脾暖胃。" }
+                    { name: "牛肉青菜疙瘩汤", method: "做法：肉末炒香加水，下细小面疙瘩。山西特色推荐，补铁壮骨。" },
+                    { name: "黑木耳炒蛋", method: "做法：木耳泡发切丝，蛋液炒散后加入同炒。清肺补血。" }
                 ]
             },
-            jishi: {
-                advice: "积食重在消。北方孩子爱吃面，积滞需用『焦香』化解。陈醋有助于下气。晚餐需减量。",
+            brain: {
                 breakfast: [
-                    { name: "焦香炒面糊", method: "做法：干锅不放油，下白面粉中小火不停翻炒至微黄色并有焦香味。取两勺用开水冲开调匀。焦香入脾，专门化解面食积滞。" },
-                    { name: "下气白萝卜水", method: "做法：白萝卜连皮切厚片，加水煮15分钟。只给孩子喝温热的萝卜水。下气消胀，缓解积食引起的不适。" },
-                    { name: "小米清粥油", method: "做法：大火烧开小米后转小火慢熬，不加任何辅料。只舀取表面那一层厚厚的米油喝。给肠胃彻底放假。" }
+                    { name: "核桃红枣小米粥", method: "做法：核桃压碎，枣去核。小米熬烂。益智补脑，山西经典组合。" },
+                    { name: "蛋羹配芝麻酱", method: "做法：蒸水蛋出锅滴少许芝麻酱和生抽。富含卵磷脂。" }
                 ],
                 lunch: [
-                    { name: "萝卜丝手擀面", method: "做法：白萝卜切细丝，先下锅煮至透明。再放入手擀面煮熟。萝卜下气，面食饱腹，加一滴老陈醋助消化。" },
-                    { name: "西红柿烩豆腐", method: "做法：豆腐切小方丁。西红柿去皮炒出汁，下豆腐和少量水煨煮10分钟。酸甜开胃，补脾消积。" },
-                    { name: "素炒白菜粉丝", method: "做法：白菜切丝，粉丝泡软。少油快炒，出锅前多放点醋。白菜通便，醋能消积，清爽利肠。" }
+                    { name: "胡萝卜煨羊肉", method: "做法：羊肉切块煨烂，加大量胡萝卜。保护视力，北方暖身益气。" },
+                    { name: "三文鱼/鱼类拌饭", method: "做法：鱼肉煎熟压碎，拌入软米饭中。提供DHA。" }
                 ],
                 dinner: [
-                    { name: "小米油挂面汤", method: "做法：用煮小米剩下的清汤煮少量细挂面。不放蛋肉，只放点盐。给积食后的脾胃一个喘息机会。" },
-                    { name: "理气素疙瘩汤", method: "做法：极小面疙瘩配白萝卜碎。煮得稀稀的，喝汤为主。让脾胃在睡眠中无负担地自我修复。" },
-                    { name: "蒸软南瓜块", method: "做法：老南瓜切块直接蒸熟。不加糖，直接吃。南瓜补中而不伤正，适合积食后的平补。" }
+                    { name: "南瓜蒸百合", method: "做法：老南瓜切块铺上鲜百合蒸熟。安神护眼，晚餐首选。" },
+                    { name: "银耳花生汤", method: "做法：银耳泡发，花生煮软。生津润肺。" }
+                ]
+            },
+            digestion: {
+                breakfast: [
+                    { name: "焦香炒面糊", method: "做法：干粉炒黄冲水。山西化积老方，专门化解面食积滞。" },
+                    { name: "陈皮白粥", method: "做法：陈皮理气，白粥和胃。积食首选。" }
+                ],
+                lunch: [
+                    { name: "白萝卜烩豆腐", method: "做法：白萝卜丝下汤，豆腐丁同煮。下气消食，加一滴老陈醋。" },
+                    { name: "西红柿蛋面", method: "做法：西红柿炒出汁加水下面。酸甜开胃，补脾消积。" }
+                ],
+                dinner: [
+                    { name: "南瓜小米糊", method: "做法：蒸熟南瓜压泥入小米粥。补中益气，晚餐极易消化。" },
+                    { name: "萝卜水", method: "做法：萝卜煮水喝汤。饭后半小时饮用消腹胀。" }
                 ]
             }
         };
 
-        let currentSymptom = 'pixu';
+        let currentCat = 'growth';
         let currentMeal = 'breakfast';
 
-        function setSymptom(s, el) {
-            currentSymptom = s;
+        function setCategory(cat, el) {
+            currentCat = cat;
             document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
             updateUI();
@@ -112,16 +141,32 @@
         }
 
         function updateUI() {
-            const pool = recipePool[currentSymptom];
-            const options = pool[currentMeal];
+            const options = recipePool[currentCat][currentMeal];
             const selected = options[Math.floor(Math.random() * options.length)];
-            
             document.getElementById('recipe-name').innerText = selected.name;
             document.getElementById('recipe-method').innerText = selected.method;
-            document.getElementById('health-advice').innerText = pool.advice;
+        }
+
+        // 成长记录逻辑
+        function saveRecord() {
+            const h = document.getElementById('height').value;
+            const w = document.getElementById('weight').value;
+            if(!h || !w) return alert("请完整输入身高体重");
+            const date = new Date().toLocaleDateString();
+            const record = `${date}: 身高 ${h}cm, 体重 ${w}kg`;
+            let records = JSON.parse(localStorage.getItem('growthRecords') || "[]");
+            records.unshift(record);
+            localStorage.setItem('growthRecords', JSON.stringify(records));
+            displayRecords();
+        }
+
+        function displayRecords() {
+            const records = JSON.parse(localStorage.getItem('growthRecords') || "[]");
+            document.getElementById('history').innerHTML = records.map(r => `<div>${r}</div>`).join('') || "还没有记录";
         }
 
         updateUI();
+        displayRecords();
     </script>
 </body>
 </html>
