@@ -3,26 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>初食 · 黄帝内经智能对症</title>
+    <title>初食 · 黄帝内经智能食谱</title>
     <style>
         :root { --main: #8b4513; --accent: #d44d22; --paper: #fdfaf5; }
-        body { font-family: "STKaiti", "KaiTi", serif; background: #eee; margin: 0; padding: 10px; }
+        body { font-family: "STKaiti", "KaiTi", serif; background: #f0f0f0; margin: 0; padding: 10px; }
         .container { max-width: 500px; margin: auto; background: var(--paper); border: 2px solid var(--main); border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         h1 { color: var(--main); text-align: center; border-bottom: 2px solid var(--main); margin-bottom: 15px; padding-bottom: 10px; }
         
+        /* 症状选择 */
         .section-title { font-size: 0.95em; font-weight: bold; color: var(--main); margin: 15px 0 10px 0; display: block; }
         .grid-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .tag { background: #fff; border: 1px solid #d2b48c; padding: 12px 5px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.9em; transition: 0.3s; }
-        .tag.active { background: var(--main); color: white; border-color: var(--main); }
+        .tag { background: #fff; border: 1px solid #d2b48c; padding: 12px 5px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.9em; transition: 0.3s; box-shadow: 0 2px 2px rgba(0,0,0,0.05); }
+        .tag.active { background: var(--main); color: white; border-color: var(--main); transform: translateY(-2px); }
 
+        /* 时段切换按钮 */
         .meal-nav { display: flex; justify-content: space-between; margin: 25px 0 15px 0; border-bottom: 2px solid #eee; }
-        .meal-btn { flex: 1; padding: 12px; cursor: pointer; text-align: center; color: #888; font-weight: bold; }
+        .meal-btn { flex: 1; padding: 12px; cursor: pointer; text-align: center; color: #888; font-weight: bold; transition: 0.2s; }
         .meal-btn.active { color: var(--accent); border-bottom: 3px solid var(--accent); background: #fff5e6; }
 
-        .recipe-display { min-height: 180px; background: #fff; border-radius: 10px; padding: 20px; border: 1px solid #e0e0e0; position: relative; }
-        .recipe-content { line-height: 1.8; font-size: 1.1em; color: #444; }
-        .refresh-btn { margin-top: 15px; background: var(--accent); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.8em; }
+        /* 内容展示区 */
+        .recipe-display { min-height: 200px; background: #fff; border-radius: 10px; padding: 20px; border: 1px solid #e0e0e0; position: relative; display: flex; flex-direction: column; justify-content: center; }
+        .recipe-text { line-height: 1.8; font-size: 1.15em; color: #444; text-align: left; }
+        .refresh-hint { font-size: 0.8em; color: #aaa; text-align: center; margin-top: 15px; }
         
+        /* 调理要旨 */
         .health-tip { margin-top: 20px; padding: 15px; background: #fff5e6; border-left: 4px solid var(--main); font-size: 0.9em; color: #8a6d3b; border-radius: 0 5px 5px 0; }
     </style>
 </head>
@@ -30,10 +34,10 @@
     <div class="container">
         <h1>📜 初食 · 对症食谱</h1>
         
-        <span class="section-title">1. 今日孩子状态：</span>
+        <span class="section-title">1. 请观察孩子当前症状：</span>
         <div class="grid-selector">
-            <div class="tag active" onclick="setSymptom('jishi', this)">积食(口臭/苔厚)</div>
-            <div class="tag" onclick="setSymptom('pixu', this)">脾虚(没胃口/面黄)</div>
+            <div class="tag active" onclick="setSymptom('pixu', this)">脾虚(不爱吃饭/面黄)</div>
+            <div class="tag" onclick="setSymptom('jishi', this)">积食(口臭/苔厚)</div>
             <div class="tag" onclick="setSymptom('yinxiu', this)">内火(手热/便干)</div>
             <div class="tag" onclick="setSymptom('shiqi', this)">湿重(便溏/腻)</div>
         </div>
@@ -44,60 +48,95 @@
             <div class="meal-btn" onclick="setMeal('dinner', this)">🌙 晚餐</div>
         </div>
 
-        <div class="recipe-display">
-            <div id="recipe-text" class="recipe-content">正在调配食谱...</div>
-            <button class="refresh-btn" onclick="updateUI()">换一个方案</button>
+        <div class="recipe-display" onclick="updateUI()">
+            <div id="recipe-text" class="recipe-text">正在调配食谱...</div>
+            <div class="refresh-hint">💡 点击卡片可随机切换方案</div>
         </div>
 
         <div class="health-tip">
-            <strong>💡 调理要旨：</strong>
+            <strong>📖 调理要旨：</strong>
             <span id="health-advice"></span>
         </div>
     </div>
 
     <script>
-        // --- 核心食谱库：你可以在这里无限添加 ---
+        // --- 核心食谱池：每个时段准备了3个方案 ---
         const recipePool = {
-            jishi: {
-                advice: "积食重在『消』。晚餐减半或不吃肉，让脾胃休息。",
+            pixu: {
+                advice: "脾虚重在『养』。忌生冷，宜温软。针对5岁幼儿建议多用怀山药、茯苓、芡实。",
                 breakfast: [
-                    "【消积】焦山楂麦芽水 + 烤焦的馒头片。",
-                    "【化积】鸡内金粥 + 少量蒸红薯。",
-                    "【顺气】陈皮白粥 + 咸鸭蛋清（少量）。"
+                    "【健脾粥】怀山药大枣粥。山药去皮切碎同煮，补脾圣品。",
+                    "【益气餐】茯苓馒头 + 暖胃小米糊。茯苓平淡健脾，利水而不伤正。",
+                    "【固本羹】芡实莲子羹（去芯）。补脾固肾，适合经常流口水的孩子。"
                 ],
                 lunch: [
-                    "【下气】白萝卜丝煮面，不放肉，只放青菜。",
-                    "【和胃】山药炒黑木耳 + 清米汤面。",
-                    "【导滞】豆芽炒粉条（少油）+ 小米饭。"
+                    "【补虚餐】板栗炖鸡肉 + 软糯米饭。板栗补脾，鸡肉益气。",
+                    "【强身餐】清蒸鲈鱼 + 怀山药炒胡萝卜。优质蛋白，温和好消化。",
+                    "【醒脾餐】砂仁蒸肉饼 + 小笼馒头。砂仁能化湿醒脾，增进食欲。"
                 ],
                 dinner: [
-                    "【减负】清粥油（只喝浓汤），不吃米粒。",
-                    "【理气】陈皮瘦肉水（只喝汤）。",
-                    "【安神】小米粥 + 蒸南瓜。"
+                    "【和胃糊】南瓜茯苓糊。南瓜补中益气，茯苓助眠。",
+                    "【安脾餐】怀山药炒木耳 + 玉米糊。粗细搭配，呵护娇嫩肠胃。",
+                    "【润中粥】红薯山药粥。润肠通便，同时补益脾气。"
                 ]
             },
-            pixu: {
-                advice: "脾虚重在『养』。忌生冷，宜温软。针对5岁幼儿建议多用怀山药。",
+            jishi: {
+                advice: "积食重在『消』。晚餐减半或不吃肉。可用焦山楂、麦芽、陈皮调理。",
                 breakfast: [
-                    "【健脾】怀山药大枣粥，山药切碎。",
-                    "【益气】茯苓馒头 + 暖胃小米糊。",
-                    "【补土】芡实莲子羹（去芯）。"
+                    "【消积饮】焦山楂麦芽水 + 烤焦的馒头片。焦香入脾，化积最快。",
+                    "【化积粥】鸡内金粥 + 少量蒸红薯。鸡内金能消一切饮食积滞。",
+                    "【顺气粥】陈皮白粥 + 少量咸鸭蛋清。陈皮理气和胃，缓解腹胀。"
                 ],
                 lunch: [
-                    "【补虚】板栗炖鸡肉 + 软糯米饭。",
-                    "【强身】清蒸鲈鱼 + 怀山药炒胡萝卜。",
-                    "【开胃】砂仁蒸肉饼 + 小笼馒头。"
+                    "【下气面】白萝卜丝煮面（多萝卜少肉）。白萝卜顺气消胀效果极佳。",
+                    "【和胃餐】山药炒黑木耳 + 清米汤面。清理肠道垃圾，减轻负担。",
+                    "【导滞餐】豆芽炒粉条（少油）+ 小米饭。纤维素助排便，消解内积。"
                 ],
                 dinner: [
-                    "【和胃】南瓜茯苓糊，温和好消化。",
-                    "【安脾】怀山药炒木耳 + 玉米糊。",
-                    "【润中】红薯山药粥。"
+                    "【减负汤】清粥油（只喝浓汤不吃米）。让脾胃在睡眠中充分休息。",
+                    "【理气水】陈皮瘦肉水（只喝汤）。温和补水，同时梳理肠胃气机。",
+                    "【安神餐】小米粥 + 蒸南瓜。小米养胃，南瓜补中，平淡最养人。"
+                ]
+            },
+            yinxiu: {
+                advice: "内火重在『润』。少吃辛辣炸物。多用银耳、百合、梨等滋阴食材。",
+                breakfast: [
+                    "【滋阴羹】银耳百合莲子羹。滋阴生津，安神润肺。",
+                    "【润燥餐】藕粉糊 + 少量核桃仁。藕粉生津润燥，最养阴液。",
+                    "【清润饮】马蹄雪梨汤 + 蒸蛋。清热化痰，润肺养阴。"
+                ],
+                lunch: [
+                    "【清补餐】清蒸鲈鱼 + 清炒菠菜。滋阴补血，不生内火。",
+                    "【和润餐】丝瓜炒蛋 + 五谷饭。丝瓜凉血清热，适合手脚心热的孩子。",
+                    "【养阴餐】鸭肉炖山药。鸭肉性凉滋阴，补而不燥。"
+                ],
+                dinner: [
+                    "【润下餐】黑芝麻糊 + 蒸红薯。滋阴补肾，润肠通便。",
+                    "【生津粥】甘蔗马蹄粥。清热生津，解决夜间口干。",
+                    "【宁心粥】百合小米粥。滋阴清热，帮助孩子安稳入睡。"
+                ]
+            },
+            shiqi: {
+                advice: "湿重重在『运』。少吃甜食和油腻，甜极易生湿。针对便溏孩子，药食同源。",
+                breakfast: [
+                    "【祛湿粥】炒薏米芡实粥。薏米炒用不凉，芡实固肾排水。",
+                    "【醒脾餐】陈皮馒头 + 赤小豆豆浆。理气祛湿，开胃醒脾。",
+                    "【健运羹】山药扁豆糕。白扁豆是祛湿良药，温和健脾。"
+                ],
+                lunch: [
+                    "【化湿餐】砂仁蒸鱼 + 杂粮饭。砂仁辛散，专门化解中焦水湿。",
+                    "【利水餐】冬瓜炖排骨。利水消肿，清除体内湿热毒素。",
+                    "【运脾餐】胡萝卜炒芹菜。增加肠胃动力，带动水湿排泄。"
+                ],
+                dinner: [
+                    "【和胃汤】赤小豆山药汤。利水消肿，不给脾胃增加水分负担。",
+                    "【醒胃粥】生姜小米粥。一点生姜散寒化湿，温暖脾胃。",
+                    "【固肠粥】白扁豆粥。专门调理脾虚引起的便溏、拉肚子。"
                 ]
             }
-            // 更多症状如 yinxiu, shiqi 可按此格式自行扩充内容
         };
 
-        let currentSymptom = 'jishi';
+        let currentSymptom = 'pixu';
         let currentMeal = 'breakfast';
 
         function setSymptom(s, el) {
@@ -118,14 +157,14 @@
             const pool = recipePool[currentSymptom];
             const options = pool[currentMeal];
             
-            // 随机抽取一个食谱
+            // 随机抽取一个方案
             const randomRecipe = options[Math.floor(Math.random() * options.length)];
             
-            document.getElementById('recipe-text').innerHTML = `<strong>今日建议：</strong><br>${randomRecipe}`;
+            document.getElementById('recipe-text').innerHTML = `<strong>推荐方案：</strong><br>${randomRecipe}`;
             document.getElementById('health-advice').innerText = pool.advice;
         }
 
-        // 首次加载
+        // 页面启动时初始化一次
         updateUI();
     </script>
 </body>
