@@ -3,180 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>黄帝内经·顺时食单 - 孩子专属版</title>
+    <title>顺时食单 · 孩子专属</title>
     <style>
-        :root {
-            --primary-green: #2d5a27;
-            --light-green: #f1f8f1;
-            --accent-gold: #c5a059;
-        }
-        body {
-            font-family: "Microsoft YaHei", sans-serif;
-            background-color: var(--light-green);
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: 1px solid #e0ede0;
-        }
-        h1 {
-            color: var(--primary-green);
-            text-align: center;
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-        .intro {
-            font-size: 0.9rem;
-            color: #666;
-            text-align: center;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-        .btn-group {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
-            margin-bottom: 20px;
-        }
-        .btn-group button {
-            padding: 10px 2px;
-            border: none;
-            border-radius: 8px;
-            background: #f0f0f0;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: 0.3s;
-        }
-        .btn-group button:hover { background: var(--primary-green); color: white; }
+        :root { --primary: #2d5a27; --bg: #f4f8f4; --accent: #c5a059; }
+        body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .app-container { max-width: 500px; width: 100%; background: #fff; border-radius: 24px; padding: 20px; box-shadow: 0 10px 30px rgba(45,90,39,0.1); border: 1px solid #e0ede0; }
+        header { text-align: center; margin-bottom: 25px; }
+        header h1 { color: var(--primary); font-size: 1.4rem; margin: 0; letter-spacing: 2px; }
+        header p { color: #888; font-size: 0.85rem; margin-top: 5px; }
+        
+        /* 三餐切换 */
+        .meal-tabs { display: flex; justify-content: space-around; background: #f0f4f0; border-radius: 12px; padding: 5px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: none; border-radius: 8px; cursor: pointer; color: #666; font-weight: bold; transition: 0.3s; }
+        .tab-btn.active { background: var(--primary); color: white; }
 
-        #pick-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary-green);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(45, 90, 39, 0.3);
-        }
+        /* 状态选择 */
+        .status-title { font-size: 0.9rem; color: var(--primary); font-weight: bold; margin-bottom: 10px; }
+        .status-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .status-tag { padding: 6px 12px; border: 1px solid #ddd; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; background: white; }
+        .status-tag.active { border-color: var(--primary); background: var(--bg); color: var(--primary); font-weight: bold; }
 
-        #result-area {
-            margin-top: 25px;
-            min-height: 200px;
-            perspective: 1000px;
-        }
-
-        .recipe-card {
-            background: #fff;
-            border: 2px solid var(--primary-green);
-            border-radius: 15px;
-            padding: 20px;
-            animation: flipIn 0.6s ease-out;
-        }
-
-        @keyframes flipIn {
-            from { transform: rotateX(-90deg); opacity: 0; }
-            to { transform: rotateX(0deg); opacity: 1; }
-        }
-
-        .tag {
-            display: inline-block;
-            background: var(--accent-gold);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            margin-bottom: 10px;
-        }
-        .dish-name {
-            font-size: 1.3rem;
-            color: var(--primary-green);
-            margin: 0 0 10px 0;
-        }
-        .section-title {
-            font-weight: bold;
-            color: var(--accent-gold);
-            margin-top: 15px;
-            font-size: 0.95rem;
-        }
-        .content-text {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin: 5px 0;
-        }
+        /* 结果展示卡片 */
+        #display-area { min-height: 260px; }
+        .card { background: var(--bg); border: 1px dashed var(--primary); border-radius: 16px; padding: 20px; animation: fadeIn 0.4s ease; position: relative; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10deg); } to { opacity: 1; transform: translateY(0); } }
+        .dish-title { color: var(--primary); font-size: 1.2rem; margin: 0 0 10px 0; display: flex; align-items: center; }
+        .dish-title::before { content: "🥣"; margin-right: 8px; }
+        .tag-row { margin-bottom: 15px; }
+        .mini-tag { font-size: 0.7rem; background: var(--accent); color: white; padding: 2px 6px; border-radius: 4px; margin-right: 5px; }
+        .section-label { font-size: 0.85rem; font-weight: bold; color: var(--accent); margin-top: 12px; }
+        .section-content { font-size: 0.9rem; line-height: 1.6; color: #444; margin: 4px 0 10px 0; }
+        
+        .empty-tip { text-align: center; color: #bbb; padding-top: 50px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>黄帝内经 · 顺时食单</h1>
-    <p class="intro">五载童子，脾胃尚娇。遵循五行，顺时而食。<br>让孩子每一口都吃出抵抗力。</p>
+<div class="app-container">
+    <header>
+        <h1>黄帝内经 · 顺时食单</h1>
+        <p>5岁+孩子脾胃调理手册</p>
+    </header>
 
-    <div class="btn-group">
-        <button onclick="filterPick('肝')">木/肝</button>
-        <button onclick="filterPick('心')">火/心</button>
-        <button onclick="filterPick('脾')">土/脾</button>
-        <button onclick="filterPick('肺')">金/肺</button>
-        <button onclick="filterPick('肾')">水/肾</button>
+    <div class="meal-tabs">
+        <button class="tab-btn active" onclick="setMeal('早餐')">☀️ 早餐</button>
+        <button class="tab-btn" onclick="setMeal('午餐')">🕛 午餐</button>
+        <button class="tab-btn" onclick="setMeal('晚餐')">🌙 晚餐</button>
     </div>
 
-    <button id="pick-btn" onclick="randomPick()">🎲 随机选一道顺时菜</button>
-
-    <div id="result-area">
+    <div class="status-title">孩子现在的状态：</div>
+    <div class="status-group" id="status-group">
         </div>
+
+    <div id="display-area">
+        <div class="empty-tip">请选择上方时段与状态查看食单</div>
+    </div>
 </div>
 
 <script>
-    const recipeDB = [
-        { type: "肝", element: "木", dish: "西红柿炒猪肝", reason: "补肝明目，适合春天孩子长个子，缓解眼疲劳。", steps: "1. 猪肝切薄片用清水抓洗去血水。 2. 锅热入油姜丝煸香，滑入猪肝变色盛出。 3. 炒西红柿出汁，倒回猪肝加盐快速翻炒出锅。" },
-        { type: "肝", element: "木", dish: "芹菜炒肉丝", reason: "平肝清热，春季生发之机，疏通气机。", steps: "1. 芹菜切段焯水捞出。 2. 肉丝加少许淀粉抓匀，入锅炒至变色。 3. 加入芹菜和少许盐、生抽，大火快炒30秒。" },
-        { type: "心", element: "火", dish: "莲子百合红枣粥", reason: "养心安神，适合孩子晚上睡不踏实、易惊醒。", steps: "1. 莲子去芯泡发。 2. 与百合、大米、红枣同入砂锅。 3. 大火烧开转小火熬至粘稠，加少许冰糖。" },
-        { type: "心", element: "火", dish: "清蒸肉末蛋羹", reason: "蛋入心经，肉末补血，平和滋补。", steps: "1. 鸡蛋打散加1.5倍温水。 2. 表面撒上细碎肉末。 3. 盖盘子上锅蒸8-10分钟，淋一点麻油。" },
-        { type: "脾", element: "土", dish: "山药炖排骨", reason: "健脾益气，5岁娃脾胃弱的“第一补”。", steps: "1. 排骨焯水洗净。 2. 铁棍山药切块。 3. 同入锅中加水、姜片，炖40-60分钟，肉烂加少许盐。" },
-        { type: "脾", element: "土", dish: "胡萝卜炒鸡蛋", reason: "土色入脾，胡萝卜健脾消食，保护肠胃。", steps: "1. 鸡蛋打散炒熟盛出。 2. 胡萝卜擦丝入锅炒软（油稍多一点有利于营养吸收）。 3. 倒入鸡蛋，加一点点盐翻炒均匀。" },
-        { type: "脾", element: "土", dish: "芡实茯苓瘦肉汤", reason: "去湿健脾，适合大便稀软、舌苔厚腻的项目。", steps: "1. 茯苓、芡实泡水。 2. 瘦肉切片。 3. 煮开后小火慢炖1小时，喝汤吃肉。" },
-        { type: "肺", element: "金", dish: "银耳雪梨汤", reason: "润肺止咳，预防季节性干燥引起的干咳。", steps: "1. 银耳泡发撕小片。 2. 雪梨切块。 3. 放入电锅慢煮1小时，至银耳出胶，加点枸杞。" },
-        { type: "肺", element: "金", dish: "百合炒西芹", reason: "清肺热，保持呼吸道清爽。", steps: "1. 鲜百合洗净，西芹切斜片。 2. 西芹焯水备用。 3. 油热下西芹百合，加盐快炒至百合透明即可。" },
-        { type: "肾", element: "水", dish: "黑豆排骨汤", reason: "补肾滋阴，黑色入肾，强壮骨骼生长。", steps: "1. 黑豆提前泡发4小时。 2. 与焯过水的排骨同入锅。 3. 加生姜、足量水，小火炖至黑豆软烂。" },
-        { type: "肾", element: "水", dish: "芝麻红薯泥", reason: "补肾通便，黑芝麻补肾气，红薯促消化。", steps: "1. 红薯蒸熟压成泥。 2. 拌入熟黑芝麻粉。 3. 做成小球或者直接给孩子当加餐餐点。" }
-    ];
+    const data = {
+        "早餐": [
+            { status: "没精神/赖床", dish: "生姜红枣小米粥", reason: "唤醒脾胃阳气，让孩子一天更有活力。", steps: "1. 小米洗净；2. 加入3片姜、4枚红枣；3. 熬至粘稠，去姜片喂食。" },
+            { status: "胃口不开", dish: "山药胡萝卜泥", reason: "甘淡健脾，开启晨间食欲。", steps: "1. 山药胡萝卜蒸熟；2. 压碎成泥；3. 淋一滴香油调味。" },
+            { status: "正常状态", dish: "蒸红薯伴核桃仁", reason: "补肾益智，提供上午充足动力。", steps: "1. 红薯蒸熟；2. 核桃仁压碎；3. 拌匀食用，简单好消化。" }
+        ],
+        "午餐": [
+            { status: "积食/口臭", dish: "白萝卜煮排骨", reason: "消食下气，化解中焦积滞。", steps: "1. 排骨焯水；2. 白萝卜切厚片；3. 同炖1小时，只需一点盐。" },
+            { status: "个头较小", dish: "清蒸鲈鱼/鳜鱼", reason: "优质蛋白补脾益气，利于长肉长高。", steps: "1. 鱼抹姜丝葱段；2. 沸水上锅蒸8分钟；3. 倒掉腥水，淋点生抽。" },
+            { status: "容易感冒", dish: "黄芪牛肉汤", reason: "补气固表，增强孩子抵抗力。", steps: "1. 牛肉切块焯水；2. 加入3克黄芪、姜片；3. 炖至肉烂。" }
+        ],
+        "晚餐": [
+            { status: "睡不踏实", dish: "百合莲子粥", reason: "滋阴养心，缓解孩子虚烦惊啼。", steps: "1. 莲子去芯；2. 与干百合同煮；3. 晚饭食用，平和安神。" },
+            { status: "手脚心热", dish: "生地麦冬炖瘦肉", reason: "滋阴清热，调理孩子虚火。", steps: "1. 瘦肉剁泥；2. 加入少许麦冬；3. 隔水蒸40分钟饮汤。" },
+            { status: "眼睛疲劳", dish: "枸杞猪肝汤", reason: "入肝经，缓解看屏幕或用眼疲劳。", steps: "1. 猪肝切片去血水；2. 滚水中加入枸杞、猪肝；3. 变色即关火，最是鲜嫩。" }
+        ]
+    };
 
-    function renderRecipe(recipe) {
-        const area = document.getElementById('result-area');
+    let currentMeal = '早餐';
+
+    function setMeal(meal) {
+        currentMeal = meal;
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.innerText.includes(meal));
+        });
+        renderStatus();
+    }
+
+    function renderStatus() {
+        const group = document.getElementById('status-group');
+        group.innerHTML = '';
+        data[currentMeal].forEach((item, index) => {
+            const tag = document.createElement('div');
+            tag.className = 'status-tag';
+            tag.innerText = item.status;
+            tag.onclick = () => showRecipe(index);
+            group.appendChild(tag);
+        });
+        document.getElementById('display-area').innerHTML = '<div class="empty-tip">点选下方状态获取食单</div>';
+    }
+
+    function showRecipe(index) {
+        document.querySelectorAll('.status-tag').forEach((t, i) => {
+            t.classList.toggle('active', i === index);
+        });
+        const recipe = data[currentMeal][index];
+        const area = document.getElementById('display-area');
         area.innerHTML = `
-            <div class="recipe-card">
-                <span class="tag">${recipe.element} · ${recipe.type}</span>
-                <h2 class="dish-name">${recipe.dish}</h2>
-                <div class="section-title">【中医原理】</div>
-                <p class="content-text">${recipe.reason}</p>
-                <div class="section-title">【极简做法】</div>
-                <p class="content-text">${recipe.steps}</p>
+            <div class="card">
+                <div class="tag-row"><span class="mini-tag">${currentMeal}</span><span class="mini-tag">顺时调理</span></div>
+                <h2 class="dish-title">${recipe.dish}</h2>
+                <div class="section-label">【为何要吃】</div>
+                <div class="section-content">${recipe.reason}</div>
+                <div class="section-label">【老兵传授做法】</div>
+                <div class="section-content">${recipe.steps}</div>
             </div>
         `;
     }
 
-    function randomPick() {
-        const index = Math.floor(Math.random() * recipeDB.length);
-        renderRecipe(recipeDB[index]);
-    }
-
-    function filterPick(type) {
-        const filtered = recipeDB.filter(r => r.type === type);
-        const index = Math.floor(Math.random() * filtered.length);
-        renderRecipe(filtered[index]);
-    }
+    // 初始化
+    renderStatus();
 </script>
 
 </body>
