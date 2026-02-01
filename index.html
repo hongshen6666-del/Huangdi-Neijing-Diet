@@ -3,43 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>初食 · 黄帝内经智能食谱</title>
+    <title>初食 · 晋地对症详细食谱</title>
     <style>
         :root { --main: #8b4513; --accent: #d44d22; --paper: #fdfaf5; }
         body { font-family: "STKaiti", "KaiTi", serif; background: #f0f0f0; margin: 0; padding: 10px; }
         .container { max-width: 500px; margin: auto; background: var(--paper); border: 2px solid var(--main); border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         h1 { color: var(--main); text-align: center; border-bottom: 2px solid var(--main); margin-bottom: 15px; padding-bottom: 10px; }
-        
-        /* 症状选择 */
         .section-title { font-size: 0.95em; font-weight: bold; color: var(--main); margin: 15px 0 10px 0; display: block; }
         .grid-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .tag { background: #fff; border: 1px solid #d2b48c; padding: 12px 5px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.9em; transition: 0.3s; box-shadow: 0 2px 2px rgba(0,0,0,0.05); }
-        .tag.active { background: var(--main); color: white; border-color: var(--main); transform: translateY(-2px); }
-
-        /* 时段切换按钮 */
+        .tag { background: #fff; border: 1px solid #d2b48c; padding: 12px 5px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.9em; }
+        .tag.active { background: var(--main); color: white; border-color: var(--main); }
         .meal-nav { display: flex; justify-content: space-between; margin: 25px 0 15px 0; border-bottom: 2px solid #eee; }
-        .meal-btn { flex: 1; padding: 12px; cursor: pointer; text-align: center; color: #888; font-weight: bold; transition: 0.2s; }
+        .meal-btn { flex: 1; padding: 12px; cursor: pointer; text-align: center; color: #888; font-weight: bold; }
         .meal-btn.active { color: var(--accent); border-bottom: 3px solid var(--accent); background: #fff5e6; }
-
-        /* 内容展示区 */
-        .recipe-display { min-height: 200px; background: #fff; border-radius: 10px; padding: 20px; border: 1px solid #e0e0e0; position: relative; display: flex; flex-direction: column; justify-content: center; }
-        .recipe-text { line-height: 1.8; font-size: 1.15em; color: #444; text-align: left; }
-        .refresh-hint { font-size: 0.8em; color: #aaa; text-align: center; margin-top: 15px; }
-        
-        /* 调理要旨 */
+        .recipe-display { min-height: 250px; background: #fff; border-radius: 10px; padding: 20px; border: 1px solid #e0e0e0; display: flex; flex-direction: column; justify-content: center; }
+        .recipe-text { line-height: 1.8; font-size: 1.05em; color: #444; }
+        .method { font-size: 0.9em; color: #666; background: #f9f9f9; padding: 10px; border-radius: 5px; margin-top: 10px; border-left: 3px solid #d2b48c; }
         .health-tip { margin-top: 20px; padding: 15px; background: #fff5e6; border-left: 4px solid var(--main); font-size: 0.9em; color: #8a6d3b; border-radius: 0 5px 5px 0; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📜 初食 · 对症食谱</h1>
+        <h1>📜 晋风 · 详细对症食谱</h1>
+        <p style="text-align: center; font-size: 0.8em; color: #666;">（针对5岁小儿脾胃 · 包含详细做法）</p>
         
-        <span class="section-title">1. 请观察孩子当前症状：</span>
+        <span class="section-title">1. 今日孩子状态：</span>
         <div class="grid-selector">
             <div class="tag active" onclick="setSymptom('pixu', this)">脾虚(不爱吃饭/面黄)</div>
             <div class="tag" onclick="setSymptom('jishi', this)">积食(口臭/苔厚)</div>
-            <div class="tag" onclick="setSymptom('yinxiu', this)">内火(手热/便干)</div>
-            <div class="tag" onclick="setSymptom('shiqi', this)">湿重(便溏/腻)</div>
+            <div class="tag" onclick="setSymptom('yinxiu', this)">内火(燥咳/便干)</div>
+            <div class="tag" onclick="setSymptom('shiqi', this)">湿重(没劲/便溏)</div>
         </div>
 
         <div class="meal-nav">
@@ -49,89 +42,54 @@
         </div>
 
         <div class="recipe-display" onclick="updateUI()">
-            <div id="recipe-text" class="recipe-text">正在调配食谱...</div>
-            <div class="refresh-hint">💡 点击卡片可随机切换方案</div>
+            <div id="recipe-area">
+                <div id="recipe-name" style="font-weight:bold; color:var(--accent);">正在加载方案...</div>
+                <div id="recipe-method" class="method"></div>
+            </div>
         </div>
 
         <div class="health-tip">
-            <strong>📖 调理要旨：</strong>
+            <strong>📖 调理建议：</strong>
             <span id="health-advice"></span>
         </div>
     </div>
 
     <script>
-        // --- 核心食谱池：每个时段准备了3个方案 ---
         const recipePool = {
             pixu: {
-                advice: "脾虚重在『养』。忌生冷，宜温软。针对5岁幼儿建议多用怀山药、茯苓、芡实。",
+                advice: "脾虚重在养。山西小米是核心，配上红枣和山药可补脾。5岁孩子忌食生冷。",
                 breakfast: [
-                    "【健脾粥】怀山药大枣粥。山药去皮切碎同煮，补脾圣品。",
-                    "【益气餐】茯苓馒头 + 暖胃小米糊。茯苓平淡健脾，利水而不伤正。",
-                    "【固本羹】芡实莲子羹（去芯）。补脾固肾，适合经常流口水的孩子。"
+                    { name: "暖脾小米红枣糊", method: "做法：小米淘洗净，红枣去核切碎。共同放入锅中熬至浓稠。最后用勺子将红枣压泥，与小米油充分融合，温热喂食。" },
+                    { name: "健运怀山药疙瘩汤", method: "做法：山药蒸熟压泥揉入面粉中，搓成极小的面疙瘩。锅中水开后下入，煮至漂浮。补中益气，非常易消化。" },
+                    { name: "补土花生核桃浆", method: "做法：生花生与核桃仁泡软，放入豆浆机加水打浆。过滤掉渣子，只给孩子喝温热的浆液，暖脾补脑。" }
                 ],
                 lunch: [
-                    "【补虚餐】板栗炖鸡肉 + 软糯米饭。板栗补脾，鸡肉益气。",
-                    "【强身餐】清蒸鲈鱼 + 怀山药炒胡萝卜。优质蛋白，温和好消化。",
-                    "【醒脾餐】砂仁蒸肉饼 + 小笼馒头。砂仁能化湿醒脾，增进食欲。"
+                    { name: "土豆烩牛肉（软烂版）", method: "做法：牛肉切小丁冷水下锅撇沫，加生姜炖1小时至烂。放入土豆块同炖20分钟，收汁至土豆软糯。土豆益气，牛肉补脾。" },
+                    { name: "清蒸羊肉末配白萝卜", method: "做法：羊肉切细末，白萝卜切丝。两者拌匀加少许盐和姜片，上锅蒸20分钟。羊肉暖脾，萝卜防燥，适合北方体弱孩子。" },
+                    { name: "红枣补气焖饭", method: "做法：大米洗净，铺上切碎的去核红枣。按常规焖饭程序操作。米饭带有枣香，补气养血，孩子爱吃。" }
                 ],
                 dinner: [
-                    "【和胃糊】南瓜茯苓糊。南瓜补中益气，茯苓助眠。",
-                    "【安脾餐】怀山药炒木耳 + 玉米糊。粗细搭配，呵护娇嫩肠胃。",
-                    "【润中粥】红薯山药粥。润肠通便，同时补益脾气。"
+                    { name: "南瓜小米糊", method: "做法：南瓜去皮切块蒸熟压泥，加入煮好的小米粥中搅拌均匀。南瓜补中益气，小米护胃，晚餐温和。" },
+                    { name: "和胃豆角焖面", method: "做法：豆角必须切细并炖至断生。下入细面条，盖盖焖至面条熟软且豆角极烂。山西家常，重在烂熟，不伤胃气。" },
+                    { name: "温润热汤面片", method: "做法：面团擀薄切成小片。锅中少许油炒香白菜碎，加水煮开下入面片。出锅前滴两滴老陈醋，醒脾暖胃。" }
                 ]
             },
             jishi: {
-                advice: "积食重在『消』。晚餐减半或不吃肉。可用焦山楂、麦芽、陈皮调理。",
+                advice: "积食重在消。北方孩子爱吃面，积滞需用『焦香』化解。陈醋有助于下气。晚餐需减量。",
                 breakfast: [
-                    "【消积饮】焦山楂麦芽水 + 烤焦的馒头片。焦香入脾，化积最快。",
-                    "【化积粥】鸡内金粥 + 少量蒸红薯。鸡内金能消一切饮食积滞。",
-                    "【顺气粥】陈皮白粥 + 少量咸鸭蛋清。陈皮理气和胃，缓解腹胀。"
+                    { name: "焦香炒面糊", method: "做法：干锅不放油，下白面粉中小火不停翻炒至微黄色并有焦香味。取两勺用开水冲开调匀。焦香入脾，专门化解面食积滞。" },
+                    { name: "下气白萝卜水", method: "做法：白萝卜连皮切厚片，加水煮15分钟。只给孩子喝温热的萝卜水。下气消胀，缓解积食引起的不适。" },
+                    { name: "小米清粥油", method: "做法：大火烧开小米后转小火慢熬，不加任何辅料。只舀取表面那一层厚厚的米油喝。给肠胃彻底放假。" }
                 ],
                 lunch: [
-                    "【下气面】白萝卜丝煮面（多萝卜少肉）。白萝卜顺气消胀效果极佳。",
-                    "【和胃餐】山药炒黑木耳 + 清米汤面。清理肠道垃圾，减轻负担。",
-                    "【导滞餐】豆芽炒粉条（少油）+ 小米饭。纤维素助排便，消解内积。"
+                    { name: "萝卜丝手擀面", method: "做法：白萝卜切细丝，先下锅煮至透明。再放入手擀面煮熟。萝卜下气，面食饱腹，加一滴老陈醋助消化。" },
+                    { name: "西红柿烩豆腐", method: "做法：豆腐切小方丁。西红柿去皮炒出汁，下豆腐和少量水煨煮10分钟。酸甜开胃，补脾消积。" },
+                    { name: "素炒白菜粉丝", method: "做法：白菜切丝，粉丝泡软。少油快炒，出锅前多放点醋。白菜通便，醋能消积，清爽利肠。" }
                 ],
                 dinner: [
-                    "【减负汤】清粥油（只喝浓汤不吃米）。让脾胃在睡眠中充分休息。",
-                    "【理气水】陈皮瘦肉水（只喝汤）。温和补水，同时梳理肠胃气机。",
-                    "【安神餐】小米粥 + 蒸南瓜。小米养胃，南瓜补中，平淡最养人。"
-                ]
-            },
-            yinxiu: {
-                advice: "内火重在『润』。少吃辛辣炸物。多用银耳、百合、梨等滋阴食材。",
-                breakfast: [
-                    "【滋阴羹】银耳百合莲子羹。滋阴生津，安神润肺。",
-                    "【润燥餐】藕粉糊 + 少量核桃仁。藕粉生津润燥，最养阴液。",
-                    "【清润饮】马蹄雪梨汤 + 蒸蛋。清热化痰，润肺养阴。"
-                ],
-                lunch: [
-                    "【清补餐】清蒸鲈鱼 + 清炒菠菜。滋阴补血，不生内火。",
-                    "【和润餐】丝瓜炒蛋 + 五谷饭。丝瓜凉血清热，适合手脚心热的孩子。",
-                    "【养阴餐】鸭肉炖山药。鸭肉性凉滋阴，补而不燥。"
-                ],
-                dinner: [
-                    "【润下餐】黑芝麻糊 + 蒸红薯。滋阴补肾，润肠通便。",
-                    "【生津粥】甘蔗马蹄粥。清热生津，解决夜间口干。",
-                    "【宁心粥】百合小米粥。滋阴清热，帮助孩子安稳入睡。"
-                ]
-            },
-            shiqi: {
-                advice: "湿重重在『运』。少吃甜食和油腻，甜极易生湿。针对便溏孩子，药食同源。",
-                breakfast: [
-                    "【祛湿粥】炒薏米芡实粥。薏米炒用不凉，芡实固肾排水。",
-                    "【醒脾餐】陈皮馒头 + 赤小豆豆浆。理气祛湿，开胃醒脾。",
-                    "【健运羹】山药扁豆糕。白扁豆是祛湿良药，温和健脾。"
-                ],
-                lunch: [
-                    "【化湿餐】砂仁蒸鱼 + 杂粮饭。砂仁辛散，专门化解中焦水湿。",
-                    "【利水餐】冬瓜炖排骨。利水消肿，清除体内湿热毒素。",
-                    "【运脾餐】胡萝卜炒芹菜。增加肠胃动力，带动水湿排泄。"
-                ],
-                dinner: [
-                    "【和胃汤】赤小豆山药汤。利水消肿，不给脾胃增加水分负担。",
-                    "【醒胃粥】生姜小米粥。一点生姜散寒化湿，温暖脾胃。",
-                    "【固肠粥】白扁豆粥。专门调理脾虚引起的便溏、拉肚子。"
+                    { name: "小米油挂面汤", method: "做法：用煮小米剩下的清汤煮少量细挂面。不放蛋肉，只放点盐。给积食后的脾胃一个喘息机会。" },
+                    { name: "理气素疙瘩汤", method: "做法：极小面疙瘩配白萝卜碎。煮得稀稀的，喝汤为主。让脾胃在睡眠中无负担地自我修复。" },
+                    { name: "蒸软南瓜块", method: "做法：老南瓜切块直接蒸熟。不加糖，直接吃。南瓜补中而不伤正，适合积食后的平补。" }
                 ]
             }
         };
@@ -156,15 +114,13 @@
         function updateUI() {
             const pool = recipePool[currentSymptom];
             const options = pool[currentMeal];
+            const selected = options[Math.floor(Math.random() * options.length)];
             
-            // 随机抽取一个方案
-            const randomRecipe = options[Math.floor(Math.random() * options.length)];
-            
-            document.getElementById('recipe-text').innerHTML = `<strong>推荐方案：</strong><br>${randomRecipe}`;
+            document.getElementById('recipe-name').innerText = selected.name;
+            document.getElementById('recipe-method').innerText = selected.method;
             document.getElementById('health-advice').innerText = pool.advice;
         }
 
-        // 页面启动时初始化一次
         updateUI();
     </script>
 </body>
